@@ -33,8 +33,8 @@ echo 'block hash remote: '$remoteBlockHash
 # "root" corresponds to /etc/aliases (place email address there)
 if [ $localBlockHash == $remoteBlockHash ]; then
   echo 'GOOD: current navcoin block is '$blockNumber' and still on main' \
-  && echo 'Local Hash:  '$localBlockHash' \
-  && echo 'Remote Hash: '$remoteBlockHash' \
+  && echo 'Local Hash:  '$localBlockHash \
+  && echo 'Remote Hash: '$remoteBlockHash \
   | mail -s "navcoin OK!" "root"
 else
   echo 'BAD: you are on a fork, got to re-sync navcoin' \
