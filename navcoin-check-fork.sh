@@ -18,13 +18,13 @@ function getLocalBlockHash() {
 
 function getRemoteBlockHash() {
 #  curl -# 'https://pivx.ccore.online/api/getblockhash?index='$1
-   curl -# 'https://chainz.cryptoid.info/nav/api.dws?q=getblockhash&height='$1 \
+   curl -s 'https://chainz.cryptoid.info/nav/api.dws?q=getblockhash&height='$1 \
    | tr -d '"'
 }
 
-blockNumber=`getBlockNumber`
-localBlockHash=`getLocalBlockHash $blockNumber`
-remoteBlockHash=`getRemoteBlockHash $blockNumber`
+#blockNumber=`getBlockNumber`
+#localBlockHash=`getLocalBlockHash $blockNumber`
+#remoteBlockHash=`getRemoteBlockHash $blockNumber`
 
 echo '            block: '$blockNumber
 echo ' block hash local: '$localBlockHash
