@@ -18,7 +18,8 @@ function getLocalBlockHash() {
 
 function getRemoteBlockHash() {
 #  curl -# 'https://pivx.ccore.online/api/getblockhash?index='$1
-   curl -# 'https://chainz.cryptoid.info/nav/api.dws?q=getblockhash&height='$1 | tr -d '"'
+   curl -# 'https://chainz.cryptoid.info/nav/api.dws?q=getblockhash&height='$1 \
+   | tr -d '"'
 }
 
 blockNumber=`getBlockNumber`
@@ -29,10 +30,13 @@ echo '            block: '$blockNumber
 echo ' block hash local: '$localBlockHash
 echo 'block hash remote: '$remoteBlockHash
 
+# "root" corresponds to /etc/aliases (place email address there)
 if [ $localBlockHash == $remoteBlockHash ]; then
-  echo 'GOOD: still on main'
+  echo 'GOOD: current navcoin block is '$blockNumber' and still on main' \
+  | mail -s "navcoin OK!" "root"
 else
-  echo 'BAD: you are on a fork, got to re-sync'
+  echo 'BAD: you are on a fork, got to re-sync navcoin' \
+  | mail -s "navcoin forked!" "root"
 fi
 
 exit 0
