@@ -1,12 +1,12 @@
 #!/bin/bash
-# saved as pivx-check-stake.sh
+# saved as neblio-check-stake.sh
 # modification from original script by @givanse found on steemit.com:
 # https://steemit.com/pivx/@givanse/how-to-check-if-your-pivx-wallet-has-forked
 # github noted on that page is gone
 
 set -e
 
-cli=~/pivx/bin/pivx-cli
+cli=~/neblio/bin/nebliod
 dt=`date`
 
 function createFiles() {
@@ -23,7 +23,7 @@ function backupStakeInfo() {
 }
 
 function verifyStakeActive() {
-  $cli getstakingstatus
+  $cli getstakinginfo
 }
 
 function getStakeBalance() {
@@ -45,11 +45,11 @@ stakeEarned=$(echo "$stakeToday - $stakeYesterday" | bc)
 `backupStakeInfo`
 
 # finally mail the report
-mail -s "[pivx] daily stake report" "root" <<EOF
+mail -s "[nebl] daily stake report" "root" <<EOF
   Daily stake report for $dt
 
   `verifyStakeActive`
 
-  $stakeEarned PIVX earned in the last 24H.
+  $stakeEarned NEBL earned in the last 24H.
 EOF
 exit 0
