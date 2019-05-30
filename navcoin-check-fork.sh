@@ -7,9 +7,8 @@
 set -e
 
 navcoincli=~/navcoin/bin/navcoin-cli
-slowpoke='Block number out of range.'
 
-function getBlockNumber() {
+function getLocalBlockNumber() {
   $navcoincli getinfo | grep blocks | sed "s/.*: \([0-9]\+\).*/\1/"
 }
 
@@ -18,42 +17,41 @@ function getLocalBlockHash() {
 }
 
 function getRemoteBlockHash() {
-#  curl -# 'https://pivx.ccore.online/api/getblockhash?index='$1
    curl -s 'https://chainz.cryptoid.info/nav/api.dws?q=getblockhash&height='$1 | tr -d '"'
-#  requires 'go' be installed
-#  curl -# 'https://www.navexplorer.com/api/block/:hash='$1
 }
 
-blockNumber=`getBlockNumber`
-localBlockHash=`getLocalBlockHash $blockNumber`
-remoteBlockHash=`getRemoteBlockHash $blockNumber`
+localBlockNumber=`getLocalBlockNumber`
+localBlockHash=`getLocalBlockHash $localBlockNumber`
+remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
 
-#echo '            block: '$blockNumber
-#echo ' block hash local: '$localBlockHash
-#echo 'block hash remote: '$remoteBlockHash
-#echo '         slowpoke: '$slowpoke
+#echo '        local block: '$localBlockNumber
+#echo '   block hash local: '$localBlockHash
+#echo '  block hash remote: '$remoteBlockHash
 
-# "root" corresponds to /etc/aliases (place email address there)
-if [ "$remoteBlockHash" == "$slowpoke" ]; then
+# "root" corresponds to /etc/aliases (place email address there) and run newaliases
+# or could also just put your email address here (no quotes)
+if [[ "$remoteBlockHash" == *"out of range"* ]]; then
   mail -s "[nav] slowpoke alert" "root" <<EOF
-  The NAV blockchain explorer at chainz.cryptoid.info is behind the current block count
+  The NAV blockchain explorer at chainz.crypto.info is behind the current block count
+
+   Local block:  $localBlockNumber
 EOF
 exit 2
 fi
 
 if [ $localBlockHash == $remoteBlockHash ]; then
   mail -s "[nav] navcoin OK!" "root" <<EOF
-  GOOD: current navcoin block is $blockNumber and still on main
+  GOOD: current navcoin block is $localBlockNumber and still on main
 
    Local Hash:   $localBlockHash
   Remote Hash:  $remoteBlockHash
 EOF
 else
   mail -s "[nav] navcoin may be forked!" "root" <<EOF
-  BAD: current navcoin block is $blockNumber but possible hash mismatch:
+  BAD: current local navcoin block is $localBlockNumber but possible hash mismatch:
 
-   Local Hash:   $localBlockHash
-  Remote Hash:  $remoteBlockHash
+   Local Hash:     $localBlockHash
+  Remote Hash:    $remoteBlockHash
 EOF
 fi
 
