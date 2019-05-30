@@ -1,5 +1,5 @@
 # crypto-helpers
-Scripts, etc. for various crypto projects (bash)
+Scripts for various crypto projects (bash)
 
 NavCoin : NAV
 https://navcoin.org/en
