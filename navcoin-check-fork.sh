@@ -52,6 +52,9 @@ else
 
    Local Hash:     $localBlockHash
   Remote Hash:    $remoteBlockHash
+
+  Note: Run again to make sure, sometimes local is slightly behind remote so
+  really not forked but hash is mismatched.
 EOF
 fi
 
