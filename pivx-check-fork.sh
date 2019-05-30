@@ -6,10 +6,10 @@
 
 set -e
 
-pivxcli=~/pivx/bin/pivx-cli
+cli=~/pivx/bin/pivx-cli
 
 function getLocalBlockNumber() {
-  $pivxcli getinfo | grep blocks | sed "s/.*: \([0-9]\+\).*/\1/"
+  $cli getinfo | grep blocks | sed "s/.*: \([0-9]\+\).*/\1/"
 }
 
 function getRemoteBlockNumber() {
@@ -19,7 +19,7 @@ function getRemoteBlockNumber() {
 }
 
 function getLocalBlockHash() {
-  $pivxcli getblockhash $1
+  $cli getblockhash $1
   # extra sleep to slow calls to ccore api
   sleep 1
 }
