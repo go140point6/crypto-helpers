@@ -19,7 +19,8 @@ fi
 }
 
 function backupStakeInfo() {
-  `\cp "balance.today" "balance.yesterday"`
+  echo $stakeToday > balance.today
+  echo $stakeToday > balance.yesterday
 }
 
 function verifyStakeActive() {

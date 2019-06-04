@@ -19,7 +19,8 @@ fi
 }
 
 function backupStakeInfo() {
-  `\cp "balance.today" "balance.yesterday"`
+  echo $stakeToday > balance.today
+  echo $stakeToday > balance.yesterday
 }
 
 function verifyStakeActive() {
@@ -45,8 +46,6 @@ stakeEarned=$(echo "$stakeToday - $stakeYesterday" | bc)
 `backupStakeInfo`
 
 # finally mail the report
-# "root" corresponds to /etc/aliases (place email address there) and run newaliases
-# or could also just put your email address here (no quotes)
 mail -s "[pivx] daily stake report" "root" <<EOF
   Daily stake report for $dt
 
