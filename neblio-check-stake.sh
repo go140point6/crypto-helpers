@@ -18,6 +18,10 @@ if [ ! -f "balance.yesterday" ]; then
 fi
 }
 
+function checkStake() {
+  $cli getinfo | grep -w '"stake"' | sed "s/.*: \([0-9]\+.[0-9]\+\).*/\1/"
+}
+
 function backupStakeInfo() {
   echo $stakeToday > balance.today
   echo $stakeToday > balance.yesterday
@@ -31,10 +35,16 @@ function getStakeBalance() {
   $cli getinfo | grep -w "balance" | sed "s/.*: \([0-9]\+.[0-9]\+\).*/\1/"
 }
 
-# first let's just get today's PIVX balance
+# Check to see if a stake just happened, if so sleep a bit
+stakeNow=`checkStake`
+if [ $stakeNow != 0.00000000 ]; then
+  sleep 1200
+fi
+
+# Let's just get today's PIVX balance
 stakeToday=`getStakeBalance`
 
-# next le's create the files we need to be present (typically only on first run will this fire)
+# next let's create the files we need to be present (typically only on first run will this fire)
 `createFiles`
 
 # now let's compare yesterday's balance with today's to see if we earned anything from staking
