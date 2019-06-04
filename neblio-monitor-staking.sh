@@ -14,10 +14,10 @@ function verifyStakeEnabled() {
 }
 
 function verifyStakeActive() {
-  $cli getstakinginfo | grep -o "staking" | sed 's/.*://' | sed 's/,.*//' | tr -d [:blank:]
+  $cli getstakinginfo | grep -e "staking" | sed 's/.*://' | sed 's/,.*//' | tr -d [:blank:]
 }
 
-if [ `verifyStakeEnabled` != "true" ] || [ `verifyStakeActive` != "staking" ]; then
+if [ `verifyStakeEnabled` != "true" ] || [ `verifyStakeActive` != "true" ]; then
   mail -s "[nebl] stake heartbeat" "root" <<EOF
     Hourly heartbeat report $dt
 
