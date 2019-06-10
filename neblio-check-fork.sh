@@ -14,13 +14,13 @@ function getLocalBlockNumber() {
 
 function getRemoteBlockNumber() {
   curl -s 'https://explorer.nebl.io/api/getblockcount'
-  # need to slow calls to ccore api
+  # need to slow calls to api
   sleep 1
 }
 
 function getLocalBlockHash() {
   $cli getblockhash $1
-  # extra sleep to slow calls to ccore api
+  # extra sleep to slow calls to api
   sleep 1
 }
 
@@ -32,11 +32,6 @@ localBlockNumber=`getLocalBlockNumber`
 remoteBlockNumber=`getRemoteBlockNumber`
 localBlockHash=`getLocalBlockHash $localBlockNumber`
 remoteBlockHash=`getRemoteBlockHash $remoteBlockNumber`
-
-#echo '        local block: '$localBlockNumber
-#echo '       remote block: '$remoteBlockNumber
-#echo '   block hash local: '$localBlockHash
-#echo '  block hash remote: '$remoteBlockHash
 
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
 # or could also just put your email address here (no quotes)
@@ -61,9 +56,9 @@ else
   mail -s "[nebl] neblio may be forked!" "root" <<EOF
   BAD: current local neblio block is $localBlockNumber but possible hash mismatch:
 
- Remote Block:  $remoteBlockNumber
-   Local Hash:     $localBlockHash
-  Remote Hash:    $remoteBlockHash
+  Remote Block:  $remoteBlockNumber
+    Local Hash:     $localBlockHash
+   Remote Hash:    $remoteBlockHash
 
   Note: Run again to make sure, sometimes local is slightly behind remote so
   really not forked but hash is mismatched.

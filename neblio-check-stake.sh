@@ -1,66 +1,64 @@
 #!/bin/bash
 # saved as neblio-check-stake.sh
-# modification from original script by @givanse found on steemit.com:
-# https://steemit.com/pivx/@givanse/how-to-check-if-your-pivx-wallet-has-forked
-# github noted on that page is gone
+
+# note this script requires jq
+# sudo apt-get install jq
 
 set -e
 
 cli=~/neblio/bin/nebliod
 dt=`date`
+# Set the time period you will run this here (i.e. 24H)
+period="24H"
 
-function createFiles() {
-if [ ! -f "balance.today" ]; then
-  echo "$stakeToday" > "balance.today"
-fi
-if [ ! -f "balance.yesterday" ]; then
-  echo "$stakeToday" > "balance.yesterday"
-fi
+function getBlockCount() {
+  $cli getblockcount
 }
 
-function checkStake() {
-  $cli getinfo | grep -w '"stake"' | sed "s/.*: \([0-9]\+.[0-9]\+\).*/\1/"
+function getCurrentHash() {
+  $cli getblockhash $currentBlock
 }
 
-function backupStakeInfo() {
-  echo $stakeToday > balance.today
-  echo $stakeToday > balance.yesterday
+function listSinceBlock() {
+  $cli listsinceblock $(<~/neblio/bin/last.hash)
 }
 
-function verifyStakeActive() {
+function getStakingInfo() {
   $cli getstakinginfo
 }
 
-function getStakeBalance() {
-  $cli getinfo | grep -w "balance" | sed "s/.*: \([0-9]\+.[0-9]\+\).*/\1/"
-}
-
-# Check to see if a stake just happened, if so sleep a bit
-stakeNow=`checkStake`
-if [ $stakeNow != 0.00000000 ]; then
-  sleep 1200
+# make sure a file last.hash exists (likely only run the first time)
+if test -f ~/neblio/bin/last.hash; then
+  lastBlockHash=$(<~/neblio/bin/last.hash)
+else
+  currentBlock=`getBlockCount`
+  lastBlockHash=`getCurrentHash`
+  echo $lastBlockHash > ~/neblio/bin/last.hash
 fi
 
-# Let's just get today's PIVX balance
-stakeToday=`getStakeBalance`
+# get currentHash based on hash in last.hash file
+currentHash=$(listSinceBlock | jq -r '.lastblock')
 
-# next let's create the files we need to be present (typically only on first run will this fire)
-`createFiles`
+j=0
+sum=0
+# loop through and sum the total of transactions (multiple stakes over a longer period, for instance)
+for i in $(jq -r '.transactions[]? | select(.category=="generate").amount' <<< `listSinceBlock`); do
+  sum=$(echo $i + $j | bc)
+  j=$sum
+done
 
-# now let's compare yesterday's balance with today's to see if we earned anything from staking
-stakeYesterday=$(<balance.yesterday)
-# bash doens't support floating point arithmetic, so use external utility `bc`
-stakeEarned=$(echo "$stakeToday - $stakeYesterday" | bc)
+# email notificaiton
+# "root" corresponds to /etc/aliases (place email address there) and run newaliases
+# or could also just put your email address here (no quotes)
+mail -s "[nebl] $period stake report" "root" <<EOF
+  stake report for $dt
 
-# let's get things ready for tomorrow's check
-`backupStakeInfo`
+  $sum NEBL earned in last $period
 
-# finally mail the report
-mail -s "[nebl] daily stake report" "root" <<EOF
-  Daily stake report for $dt
-
-  `verifyStakeActive`
-
-  $stakeEarned NEBL earned in the last 24H.
+  `getStakingInfo`
 EOF
-exit 0
+
+# take the current hash and store in last.hash for next run
+echo $currentHash > ~/neblio/bin/last.hash
+
+exit
