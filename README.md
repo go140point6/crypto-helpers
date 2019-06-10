@@ -3,7 +3,9 @@ Scripts for various crypto projects (bash)
 
 Note: The explorers are often behind the local blockchain.  Running a second (or third) time shows everything OK.
 
-Note2: Any script that hits an explorer should be staggered slightly to avoid rate limits of said API.
+Note 2: Any script that hits an explorer should be staggered slightly to avoid rate limits of said API.
+
+Note 3: NAV and PIVX scripts are in process of being rewritten similar to NEBL... NEBL should be usable now.
 
 NavCoin : NAV<br>
 https://navcoin.org/en<br>
