@@ -1,8 +1,8 @@
 #!/bin/bash
 # saved as navcoin-check-stake.sh
-# modification from original script by @givanse found on steemit.com:
-# https://steemit.com/pivx/@givanse/how-to-check-if-your-pivx-wallet-has-forked
-# github noted on that page is gone
+
+# note this script requires jq
+# sudo apt-get install jq
 
 set -e
 
@@ -10,20 +10,26 @@ cli=~/navcoin/bin/navcoin-cli
 dt=`date`
 
 function verifyStakeActive() {
-  $cli getstakinginfo | grep -E "enabled|staking"
+  $cli getstakinginfo
 }
 
 function getStakeInfo() {
-  $cli getstakereport | grep -E "Last 24H|Last All|Latest Time"
+  $cli getstakereport
 }
 
-# "root" corresponds to /etc/aliases (place email address there) and run newaliases
-# or could also just put your email address here (no quotes)
+enabled="$($cli getstakinginfo | jq -r '.enabled')"
+staking="$($cli getstakinginfo | jq -r '.staking')"
+
+day="$($cli getstakereport | jq -r '.["Last 24H"]')"
+all="$($cli getstakereport | jq -r '.["Last All"]')"
+
 mail -s "[nav] daily stake report" "root" <<EOF
   Daily stake report for $dt
 
-  `verifyStakeActive`
+  Enabled: $enabled
+  Staking: $staking
 
-  `getStakeInfo`
+  $day NAV earned in last 24H
+  $all NAV earned total
 EOF
 exit 0

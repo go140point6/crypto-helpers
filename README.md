@@ -1,11 +1,13 @@
 # crypto-helpers
 Scripts for various crypto projects (bash)
 
-Note: The explorers are often behind the local blockchain.  Running a second (or third) time shows everything OK.
+Note: The explorers are often behind the local blockchain.  Running a second (or third) time shows everything OK.  Working on
+checking this in the script and re-running when needed.
 
 Note 2: Any script that hits an explorer should be staggered slightly to avoid rate limits of said API.
 
-Note 3: NAV and PIVX scripts are in process of being rewritten similar to NEBL... NEBL should be usable now.
+Note 3: NavCoin and Neblio scripts seem to be working mostly as expected.  PIVX is working for the fork script (mostly) but checking
+and monitoring stakes is being rewritten.
 
 NavCoin : NAV<br>
 https://navcoin.org/en<br>

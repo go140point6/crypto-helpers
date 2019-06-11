@@ -10,17 +10,17 @@ cli=~/pivx/bin/pivx-cli
 dt=`date`
 
 function createFiles() {
-if [ ! -f "balance.today" ]; then
-  echo "$stakeToday" > "balance.today"
+if [ ! -f "~/pivx/bin/balance.today" ]; then
+  echo "$stakeToday" > "~/pivx/bin/balance.today"
 fi
-if [ ! -f "balance.yesterday" ]; then
-  echo "$stakeToday" > "balance.yesterday"
+if [ ! -f "~/pivx/bin/balance.yesterday" ]; then
+  echo "$stakeToday" > "~/pivx/bin/balance.yesterday"
 fi
 }
 
 function backupStakeInfo() {
-  echo $stakeToday > balance.today
-  echo $stakeToday > balance.yesterday
+  echo $stakeToday > ~/pivx/bin/balance.today
+  echo $stakeToday > ~/pivx/bin/balance.yesterday
 }
 
 function verifyStakeActive() {
@@ -38,7 +38,7 @@ stakeToday=`getStakeBalance`
 `createFiles`
 
 # now let's compare yesterday's balance with today's to see if we earned anything from staking
-stakeYesterday=$(<balance.yesterday)
+stakeYesterday=$(<~/pivx/bin/balance.yesterday)
 # bash doens't support floating point arithmetic, so use external utility `bc`
 stakeEarned=$(echo "$stakeToday - $stakeYesterday" | bc)
 

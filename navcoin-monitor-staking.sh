@@ -1,27 +1,29 @@
 #!/bin/bash
 # saved as navcoin-monitor-staking.sh
-# modification from original script by @givanse found on steemit.com:
-# https://steemit.com/pivx/@givanse/how-to-check-if-your-pivx-wallet-has-forked
-# github noted on that page is gone
+
+# note this script requires jq
+# sudo apt-get install jq
 
 set -e
 
 cli=~/navcoin/bin/navcoin-cli
 dt=`date`
 
-function verifyStakeEnabled() {
-  $cli getstakinginfo | grep -e "enabled" | sed 's/.*://' | sed 's/,.*//' | tr -d [:blank:]
+function getStakingInfo() {
+  $cli getstakinginfo
 }
 
-function verifyStakeActive() {
-  $cli getstakinginfo | grep -e "staking" | sed 's/.*://' | sed 's/,.*//' | tr -d [:blank:]
-}
+enabled="$($cli getstakinginfo | jq -r '.enabled')"
+staking="$($cli getstakinginfo | jq -r '.staking')"
 
-if [ `verifyStakeEnabled` != "true" ] || [ `verifyStakeActive` != "true" ]; then
+if [[ $enabled != "true" || $staking != "true" ]]; then
   mail -s "[nav] stake heartbeat" "root" <<EOF
-    Hourly heartbeat report $dt
 
-    Navcoin wallet is locked or otherwise not staking
+  Hourly heartbeat report $dt
+
+  Navcoin wallet is locked or otherwise not staking
+
+  `getStakingInfo`
 EOF
 fi
 exit 0
