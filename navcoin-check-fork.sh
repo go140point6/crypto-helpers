@@ -20,42 +20,45 @@ function getRemoteBlockHash() {
    curl -s 'https://chainz.cryptoid.info/nav/api.dws?q=getblockhash&height='$1 | tr -d '"'
 }
 
-localBlockNumber=`getLocalBlockNumber`
-localBlockHash=`getLocalBlockHash $localBlockNumber`
-remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
-
-#echo '        local block: '$localBlockNumber
-#echo '   block hash local: '$localBlockHash
-#echo '  block hash remote: '$remoteBlockHash
-
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
 # or could also just put your email address here (no quotes)
-if [[ "$remoteBlockHash" == *"out of range"* ]]; then
-  mail -s "[nav] slowpoke alert" "root" <<EOF
-  The NAV blockchain explorer at chainz.crypto.info is behind the current block count
-
-   Local block:  $localBlockNumber
-EOF
-exit 2
-fi
-
-if [ $localBlockHash == $remoteBlockHash ]; then
+function sendEmailGood() {
   mail -s "[nav] navcoin OK!" "root" <<EOF
   GOOD: current navcoin block is $localBlockNumber and still on main
 
    Local Hash:   $localBlockHash
   Remote Hash:  $remoteBlockHash
 EOF
-else
+}
+
+function sendEmailBad() {
   mail -s "[nav] navcoin may be forked!" "root" <<EOF
-  BAD: current local navcoin block is $localBlockNumber but possible hash mismatch:
+  BAD: current local navcoin block is $localBlockNumber but possible hash mismatch (ran three times):
 
    Local Hash:     $localBlockHash
   Remote Hash:    $remoteBlockHash
-
-  Note: Run again to make sure, sometimes local is slightly behind remote so
-  really not forked but hash is mismatched.
 EOF
+}
+
+localBlockNumber=`getLocalBlockNumber`
+localBlockHash=`getLocalBlockHash $localBlockNumber`
+remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
+
+loop=0
+while [ $loop -lt 3 ]; do
+if [[ "$localBlockHash" == "$remoteBlockHash" ]]; then
+  `sendEmailGood`
+  loop=99
+  exit 0
+else
+  sleep 20
+  localBlockNumber=`getLocalBlockNumber`
+  localBlockHash=`getLocalBlockHash $localBlockNumber`
+  remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
+  loop=$(($loop + 1))
 fi
+done
+
+`sendEmailBad`
 
 exit 0
