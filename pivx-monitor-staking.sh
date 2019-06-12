@@ -1,23 +1,35 @@
 #!/bin/bash
 # saved as pivx-monitor-staking.sh
-# modification from original script by @givanse found on steemit.com:
-# https://steemit.com/pivx/@givanse/how-to-check-if-your-pivx-wallet-has-forked
-# github noted on that page is gone
+# run on the hour
+
+# note this script requires jq
+# sudo apt-get install jq
 
 set -e
 
 cli=~/pivx/bin/pivx-cli
 dt=`date`
 
-function verifyStakeEnabled() {
-  $cli getinfo | grep -e "staking status" | sed 's/.*://' | sed 's/,.*//' | tr -d [:blank:]
+function getStakingInfo() {
+  $cli getinfo
 }
 
-if [ `verifyStakeEnabled` != "\"StakingActive\"" ]; then
-  mail -s "[pivx] stake heartbeat" "root" <<EOF
-    Hourly heartbeat report $dt
+enabled="$($cli getinfo | jq -r '.["staking status"]')"
 
-    PIVX wallet is locked or otherwise not staking
+# "root" corresponds to /etc/aliases (place email address there) and run newaliases
+# or could also just put your email address here (no quotes)
+if [[ $enabled == "Staking Active" ]]; then
+  # do nothing, staking appears active
+  exit
+else
+  # send email, stkaing appears not to be active
+  mail -s "[pivx] stake heartbeat" "root" <<EOF
+
+  Hourly heartbeat report $dt
+
+  PIVX wallet is not staking for some reason (wallet locked?)
+
+  `getStakingInfo`
 EOF
+exit
 fi
-exit 0

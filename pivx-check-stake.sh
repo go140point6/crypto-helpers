@@ -1,8 +1,5 @@
 #!/bin/bash
 # saved as pivx-check-stake.sh
-# modification from original script by @givanse found on steemit.com:
-# https://steemit.com/pivx/@givanse/how-to-check-if-your-pivx-wallet-has-forked
-# github noted on that page is gone
 
 set -e
 
@@ -10,11 +7,11 @@ cli=~/pivx/bin/pivx-cli
 dt=`date`
 
 function createFiles() {
-if [ ! -f "~/pivx/bin/balance.today" ]; then
-  echo "$stakeToday" > "~/pivx/bin/balance.today"
+if test ! -f ~/pivx/bin/balance.today; then
+  echo $stakeToday > ~/pivx/bin/balance.today
 fi
-if [ ! -f "~/pivx/bin/balance.yesterday" ]; then
-  echo "$stakeToday" > "~/pivx/bin/balance.yesterday"
+if test ! -f ~/pivx/bin/balance.yesterday; then
+  echo $stakeToday > ~/pivx/bin/balance.yesterday
 fi
 }
 
@@ -39,9 +36,9 @@ stakeToday=`getStakeBalance`
 
 # now let's compare yesterday's balance with today's to see if we earned anything from staking
 stakeYesterday=$(<~/pivx/bin/balance.yesterday)
+
 # bash doens't support floating point arithmetic, so use external utility `bc`
 stakeEarned=$(echo "$stakeToday - $stakeYesterday" | bc)
-
 # let's get things ready for tomorrow's check
 `backupStakeInfo`
 
