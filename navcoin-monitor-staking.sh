@@ -7,7 +7,7 @@
 set -e
 
 cli=~/navcoin/bin/navcoin-cli
-dt=`date`
+dt=`date +%F\ %T`
 
 function getStakingInfo() {
   $cli getstakinginfo
@@ -15,6 +15,8 @@ function getStakingInfo() {
 
 enabled="$($cli getstakinginfo | jq -r '.enabled')"
 staking="$($cli getstakinginfo | jq -r '.staking')"
+
+echo $dt "e:$enabled" "s:$staking" >> results.log
 
 if [[ $enabled != "true" || $staking != "true" ]]; then
   mail -s "[nav] stake heartbeat" "root" <<EOF

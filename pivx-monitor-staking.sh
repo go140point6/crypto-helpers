@@ -8,13 +8,15 @@
 set -e
 
 cli=~/pivx/bin/pivx-cli
-dt=`date`
+dt=`date +%F\ %T`
 
 function getStakingInfo() {
   $cli getinfo
 }
 
 enabled="$($cli getinfo | jq -r '.["staking status"]')"
+
+echo $dt $enabled >> results.log
 
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
 # or could also just put your email address here (no quotes)
