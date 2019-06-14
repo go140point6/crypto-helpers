@@ -16,7 +16,7 @@ function getStakingInfo() {
 
 enabled="$($cli getinfo | jq -r '.["staking status"]')"
 
-echo $dt $enabled >> results.log
+echo $dt $enabled >> ~/pivx/bin/results.log
 
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
 # or could also just put your email address here (no quotes)

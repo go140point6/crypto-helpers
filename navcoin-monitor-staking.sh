@@ -16,7 +16,7 @@ function getStakingInfo() {
 enabled="$($cli getstakinginfo | jq -r '.enabled')"
 staking="$($cli getstakinginfo | jq -r '.staking')"
 
-echo $dt "e:$enabled" "s:$staking" >> results.log
+echo $dt "e:$enabled" "s:$staking" >> ~/navcoin/bin/results.log
 
 if [[ $enabled != "true" || $staking != "true" ]]; then
   mail -s "[nav] stake heartbeat" "root" <<EOF

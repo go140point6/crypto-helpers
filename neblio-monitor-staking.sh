@@ -20,7 +20,7 @@ unlocked="$($cli getstakinginfo | jq -r '.["staking-criteria"]."wallet-unlocked"
 online="$($cli getstakinginfo | jq -r '.["staking-criteria"].online')"
 sync="$($cli getstakinginfo | jq -r '.["staking-criteria"].synced')"
 
-echo $dt "enabled:$enabled" "mature:$mature" "unlocked:$unlocked" "online:$online" "sync:$sync" >> results.log
+echo $dt "enabled:$enabled" "mature:$mature" "unlocked:$unlocked" "online:$online" "sync:$sync" >> ~/neblio/bin/results.log
 
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
 # or could also just put your email address here (no quotes)
