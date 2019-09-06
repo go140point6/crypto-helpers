@@ -1,7 +1,7 @@
 # crypto-helpers
 Scripts for various crypto projects (bash)
 
-Any script that hits an explorer should be scheduled with an offset to ensure they don't all hit the explorer at the same time.
+Any script that hits the same explorer (if applicable) should be scheduled with an offset to ensure they don't all hit the explorer at the same time.
 
 NavCoin : NAV<br>
 https://navcoin.org/en<br>
