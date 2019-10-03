@@ -42,7 +42,7 @@ EOF
 
 localBlockNumber=`getLocalBlockNumber`
 localBlockHash=`getLocalBlockHash $localBlockNumber`
-remoteBlockHash=`getRemoteBlockHash $remoteBlockNumber`
+remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
 
 loop=0
 while [ $loop -lt 3 ]; do
