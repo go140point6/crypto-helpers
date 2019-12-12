@@ -17,7 +17,8 @@ function getLocalBlockHash() {
 }
 
 function getRemoteBlockHash() {
-   curl -s 'https://pivx.ccore.online/api/getblockhash?index='$1
+   #curl -s 'https://pivx.ccore.online/api/getblockhash?index='$1
+   curl -s 'https://mainnet-explorer.pivx.org/api/getblockhash?index='$1
 }
 
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
@@ -43,6 +44,9 @@ EOF
 localBlockNumber=`getLocalBlockNumber`
 localBlockHash=`getLocalBlockHash $localBlockNumber`
 remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
+#echo $localBlockNumber
+#echo $localBlockHash
+#echo $remoteBlockHash
 
 loop=0
 while [ $loop -lt 3 ]; do
@@ -56,6 +60,10 @@ else
   localBlockHash=`getLocalBlockHash $localBlockNumber`
   remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
   loop=$(($loop + 1))
+  #echo $localBlockNumber
+  #echo $localBlockHash
+  #echo $remoteBlockHash
+
 fi
 done
 
