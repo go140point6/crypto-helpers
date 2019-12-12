@@ -1,5 +1,7 @@
 #!/bin/bash
 # saved as pivx-check-stake.sh
+#
+# must have 'bc' installed (sudo apt-get install bc)
 
 set -e
 
