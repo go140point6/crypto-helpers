@@ -10,28 +10,34 @@ set -e
 cli=~/pivx/bin/pivx-cli
 dt=`date +%F\ %T`
 
-function getStakingInfo() {
-  $cli getinfo
+function getStakingStatus() {
+  $cli getstakingstatus
 }
 
-enabled="$($cli getinfo | jq -r '.["staking status"]')"
+validtime="$($cli getstakingstatus | jq -r '.validtime')"
+haveconnections="$($cli getstakingstatus | jq -r '.haveconnections')"
+walletunlocked="$($cli getstakingstatus | jq -r '.walletunlocked')"
+mintablecoins="$($cli getstakingstatus | jq -r '.mintablecoins')"
+enoughcoins="$($cli getstakingstatus | jq -r '.enoughcoins')"
+mnsync="$($cli getstakingstatus | jq -r '.mnsync')"
+staking="$($cli getstakingstatus | jq -r '.["staking status"]')"
 
-echo $dt $enabled >> ~/pivx/bin/results.log
+echo $dt "validtime:$validtime" "haveconnections:$haveconnections" "walletunlocked:$walletunlocked" "mintablecoins:$mintablecoins" "mnsync:$mnsync" "staking:$staking" >> ~/pivx/bin/results.log
 
 # "root" corresponds to /etc/aliases (place email address there) and run newaliases
 # or could also just put your email address here (no quotes)
-if [[ $enabled == "Staking Active" ]]; then
+if [[ $staking == "true" ]]; then
   # do nothing, staking appears active
   exit
 else
-  # send email, stkaing appears not to be active
+  # send email, staaking appears not to be active
   mail -s "[pivx] stake heartbeat" "root" <<EOF
 
   Hourly heartbeat report $dt
 
-  PIVX wallet is not staking for some reason (wallet locked?)
+  PIVX wallet is not staking, see below for reason:
 
-  `getStakingInfo`
+  `getStakingStatus`
 EOF
 exit
 fi
