@@ -43,6 +43,9 @@ EOF
 localBlockNumber=`getLocalBlockNumber`
 localBlockHash=`getLocalBlockHash $localBlockNumber`
 remoteBlockHash=`getRemoteBlockHash $remoteBlockNumber`
+#echo $localBlockNumber
+#echo $localBlockHash
+#echo $remoteBlockHash
 
 loop=0
 while [ $loop -lt 3 ]; do
@@ -56,6 +59,10 @@ else
   localBlockHash=`getLocalBlockHash $localBlockNumber`
   remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
   loop=$(($loop + 1))
+  #echo $localBlockNumber
+  #echo $localBlockHash
+  #echo $remoteBlockHash
+  
 fi
 done
 
