@@ -26,6 +26,7 @@ function sendEmailGood() {
   mail -s "[nav] navcoin OK!" "root" <<EOF
   GOOD: current navcoin block is $localBlockNumber and still on main
 
+        eLoop:            $eloop
    Local Hash:   $localBlockHash
   Remote Hash:  $remoteBlockHash
 EOF
@@ -43,19 +44,27 @@ EOF
 localBlockNumber=`getLocalBlockNumber`
 localBlockHash=`getLocalBlockHash $localBlockNumber`
 remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
+#echo $localBlockNumber
+#echo $localBlockHash
+#echo $remoteBlockHash
 
 loop=0
 while [ $loop -lt 3 ]; do
 if [[ "$localBlockHash" == "$remoteBlockHash" ]]; then
-  `sendEmailGood`
+  eloop=$loop
   loop=99
+  `sendEmailGood`
   exit 0
 else
-  sleep 20
+  sleep 180
   localBlockNumber=`getLocalBlockNumber`
   localBlockHash=`getLocalBlockHash $localBlockNumber`
   remoteBlockHash=`getRemoteBlockHash $localBlockNumber`
   loop=$(($loop + 1))
+  #echo $localBlockNumber
+  #echo $localBlockHash
+  #echo $remoteBlockHash
+  
 fi
 done
 
