@@ -29,7 +29,7 @@ function getStakeBalance() {
   $cli getwalletinfo | grep -w "balance" | sed "s/.*: \([0-9]\+.[0-9]\+\).*/\1/"
 }
 
-# first let's just get today's PIVX balance
+# first let's just get today's BTCT balance
 stakeToday=`getStakeBalance`
 
 # next le's create the files we need to be present (typically only on first run will this fire)
