@@ -33,7 +33,7 @@ EOF
 
 balance=`getBalance`
 
-if [[ $balance > 100 ]]; then
+if (( $balance > 100 )); then
   txid=`sendToMainWallet`
   `sendEmail`
   exit 0
