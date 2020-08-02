@@ -10,6 +10,11 @@ btct-check-mn.sh : check that masternode(s) is still "ENABLED" and report last s
 btct-check-stake.sh : make sure staking is enabled and see what has been earned.  I check once daily.<br>
 btct-monitor-staking.sh : heartbeat script to verify wallet unlocked and staking. I check hourly.</br>
 
+Lightning Cash Gold: LTNGC<br>
+https://explorer.lightningcash.tk/<br>
+ltncg-check-fork.sh : check integrity of blockchain by comparing hashes. I check three times a day.<br>
+ltncg-sendto-main.sh: send from secondary wallet to main wallet on a regular basis.  I check daily, but only send if balance is greater than 100.
+
 NavCoin : NAV<br>
 https://navcoin.org/en<br>
 navcoin-check-fork.sh : check integrity of blockchain by comparing hashes. I check three times a day.<br>
