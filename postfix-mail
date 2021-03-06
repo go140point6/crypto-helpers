@@ -1,0 +1,44 @@
+Quick write up on how I send mail from my Pi's, will try to clean up later
+
+I use gmail, create a gmail address specific for just sending mail for automated tasks because you do have to store the password in clear text on the pi
+
+sudo apt-get install postfix mailutils libsasl2-modules
+  Postfix Configuration -> Internet Site
+  "mail name" -> your pi's hostname (i.e. pi-crypto-01)
+  
+cd /etc/postfix
+sudo vim /etc/postfix/sasl_passwd
+  [smtp.gmail.com]:587 [gmail-address]:[password] (no brackets on address and password... mygmailtasksemail@gmail.com:mysupersecurepassword)
+sudo postmap /etc/postfix/sasl_passwd
+sudo chmod 600 sasl_passwd*
+sudo vim /etc/postfix/virtual
+  root myrealemailaddress@whereever.com
+sudo postmap /etc/postfix/virtual
+
+
+sudo vim /etc/postfix/main.cf
+
+Comment out:
+  #mydestination = whatever is here
+  #relayhost =
+  
+Paste in at the bottom:
+  
+  # gmail sendmail configuration
+  relayhost = [smtp.gmail.com]:587
+  smtp_tls_security_level = may
+  smtp_sasl_auth_enable = yes
+  smtp_sasl_security_options =
+  smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+  virtual_alias_maps = hash:/etc/postfix/virtual
+  mydestination =
+  
+Postfix (main.cf) is now set up with a default configuration.  If you need to
+make changes, edit /etc/postfix/main.cf (and others) as needed.  To view
+Postfix configuration values, see postconf(1).
+
+After modifying postfix, be sure to run 'systemctl reload postfix'.
+
+Test from the CLI:
+
+echo 'test' | mail -s "test subject" myrealemailaddress@whereever.com
